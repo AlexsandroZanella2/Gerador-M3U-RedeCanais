@@ -18,12 +18,11 @@ object Form1: TForm1
     Top = 80
     Width = 893
     Height = 418
-    ActivePage = TabSheet2
+    ActivePage = TabSheet3
     Align = alBottom
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'S'#233'ries'
-      ExplicitHeight = 350
       object Memo1: TMemo
         Left = 0
         Top = 0
@@ -31,16 +30,11 @@ object Form1: TForm1
         Height = 390
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 32
-        ExplicitTop = 88
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'V'#237'deos'
       ImageIndex = 1
-      ExplicitHeight = 350
       object Memo2: TMemo
         Left = 0
         Top = 0
@@ -48,17 +42,11 @@ object Form1: TForm1
         Height = 390
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 32
-        ExplicitTop = 88
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Links'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitHeight = 350
       object Memo3: TMemo
         Left = 0
         Top = 0
@@ -66,16 +54,11 @@ object Form1: TForm1
         Height = 390
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 32
-        ExplicitTop = 88
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Resultado'
       ImageIndex = 3
-      ExplicitLeft = 8
       object Memo4: TMemo
         Left = 0
         Top = 0
@@ -83,10 +66,6 @@ object Form1: TForm1
         Height = 390
         Align = alClient
         TabOrder = 0
-        ExplicitLeft = 32
-        ExplicitTop = 88
-        ExplicitWidth = 185
-        ExplicitHeight = 89
       end
     end
   end
@@ -123,6 +102,7 @@ object Form1: TForm1
     Height = 39
     Caption = 'Frames'
     TabOrder = 4
+    OnClick = Button3Click
   end
   object Button4: TButton
     Left = 231
@@ -131,5 +111,6 @@ object Form1: TForm1
     Height = 39
     Caption = 'Gerar'
     TabOrder = 5
+    OnClick = Button4Click
   end
 end

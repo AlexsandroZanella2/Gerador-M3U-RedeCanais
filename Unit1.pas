@@ -27,6 +27,8 @@ type
     Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -45,6 +47,7 @@ var
   HttpClient: THttpClient;
   HttpResponse: IHttpResponse;
 begin
+
   HttpClient := THttpClient.Create;
   try
     HttpResponse := HttpClient.Get(AURL);
@@ -84,7 +87,7 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
 retorno,lista, temp:TStringList;
 i,ii,g,j:integer;
-identificador,link, temporada, episodeo,opcao, titleSerie:string;
+identificador,link, temporada, episodeo,opcao,opcao2, titleSerie:string;
 begin
     retorno := TStringList.Create;
     lista   := TStringList.Create;
@@ -95,10 +98,10 @@ begin
     for I := 0 to memo1.Lines.Count -1 do begin
       retorno.Text := GetURL(memo1.Lines[i]);
       retorno.Text := Copy(retorno.Text, pos('<title>',retorno.Text)+7);
-      titleSerie := Copy(retorno.Text, 1,pos('</title>',retorno.Text));
-      while retorno.Text.Contains('/musicvideo.php?vid=') do begin
+      titleSerie := Copy(retorno.Text, 1,pos('</title>',retorno.Text)-1);
+      while retorno.Text.Contains('<strong>Epis&oacute;dio ') do begin
 
-        if pos('Temporada</strong>',retorno.Text) < pos('/musicvideo.php?vid=',retorno.Text) then begin
+        if (pos('Temporada</strong>',retorno.Text) < pos('<strong>Epis&oacute;dio ',retorno.Text))and (retorno.text.contains('Temporada</strong>')) then begin
           retorno.Text := copy(retorno.Text, pos('Temporada</strong>',retorno.Text)-20);
           retorno.Text := copy(retorno.Text, pos('<strong>',retorno.Text)+8);
           temporada := copy(retorno.Text,1,pos('&',retorno.Text)-1);
@@ -107,16 +110,29 @@ begin
           retorno.Text := copy(retorno.Text, pos('<strong>Epis&oacute;dio ', retorno.Text));
           retorno.Text := copy(retorno.Text, length('<strong>Epis&oacute;dio ')+1);
           episodeo := copy(retorno.Text, 1,pos(' ',retorno.Text)-1);
-          retorno.Text := copy(retorno.Text, pos('/musicvideo.php?vid=',retorno.Text));
-          if pos('dublado',retorno.Text) < pos('Legendado',retorno.Text) then begin
+
+          retorno.Text := copy(retorno.Text, pos('<a href="',retorno.Text)+9);
+          if pos('Dublado',retorno.Text) < pos('Legendado',retorno.Text) then begin
              opcao := 'Dublado';
+             opcao2 := 'Legendado'
           end else begin
-            opcao := 'Legendado'
+            opcao := 'Legendado';
+            opcao2 := 'Dublado';
           end;
           link := copy(retorno.Text, 1,pos('"',retorno.Text)-1);
           link := 'https://redecanais.bz'+link;
           lista.Add(link+'@T'+temporada+'E'+episodeo+' '+opcao+'@'+titleSerie);
-          retorno.Text := copy(retorno.Text, pos(opcao,retorno.Text));
+
+          if pos('<strong>Epis&oacute;dio ',retorno.Text) > pos(opcao2,retorno.Text)  then begin
+             retorno.Text := copy(retorno.Text,5);
+             retorno.Text := copy(retorno.Text, pos('<a href="',retorno.Text)+9);
+             link := copy(retorno.Text, 1,pos('"',retorno.Text)-1);
+             link := 'https://redecanais.bz'+link;
+             lista.Add(link+'@T'+temporada+'E'+episodeo+' '+opcao2+'@'+titleSerie);
+             retorno.Text := copy(retorno.Text, pos(opcao2,retorno.Text));
+          end else begin
+             retorno.Text := copy(retorno.Text, pos(opcao,retorno.Text));
+          end;
 
         end;
       end;
@@ -127,6 +143,66 @@ begin
     temp.Destroy;
     lista.Destroy;
     retorno.Destroy;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+var
+retorno, lista, memoPg:tstringlist;
+i,ii,g,j:integer;
+link,linkFrame,poster:string;
+begin
+    retorno := TStringList.Create;
+    lista   := TStringList.Create;
+    memoPg  := TStringList.Create;
+    //link := memo2.Lines[1];
+    //link := copy(link,1,)
+    //memo4.Lines.Text := geturl(copy(memo2.Lines[1],1,pos('@',memo2.Lines[1])-1));
+    memoPg.Text := memo2.Lines.Text;
+
+    for I := 0 to memoPg.Count -1 do begin
+      retorno.Text := GetURL(copy(memoPg[i],1,pos('@',memoPg[i])-1));
+
+      retorno.Text := Copy(retorno.Text,pos('iframe',retorno.Text));
+      retorno.Text := Copy(retorno.Text,pos('src="',retorno.Text)+5);
+      linkFrame := Copy(retorno.Text, 1, pos('"',retorno.Text)-1);
+      retorno.Text := GetURL('https://redecanais.bz'+linkFrame);
+      retorno.Text := Copy(retorno.Text,pos('baixar="',retorno.Text)+8);
+      link := Copy(retorno.Text, 1, Pos('.mp4',retorno.Text)+3);
+
+      retorno.Text := Copy(retorno.Text,pos('poster=".',retorno.Text)+9);
+      poster := Copy(retorno.Text,1,pos('"',retorno.Text)-1);
+      lista.Add(link+'@'+'https://redecanais.bz/player3'+poster+copy(memoPg[i],pos('@',memoPg[i])));
+    end;
+
+
+    memo3.Lines.Text := lista.Text;
+    retorno.Destroy;
+    lista.Destroy;
+    memoPg.Destroy;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+dados, linkvideos, lista: tstringlist;
+i,ii,g,j:integer;
+grupo, nome, capa,link: string;
+begin
+    dados := TStringList.Create;
+    lista := TStringList.Create;
+
+    dados.Text := memo3.Lines.Text;
+
+    for I := 0 to dados.Count-1 do begin
+      link := copy(dados[i],pos('@',dados[i])-1);
+
+      lista.Add()
+
+    end;
+
+
+    memo4.Lines.Text := lista.Text;
+    dados.Destroy;
+    lista.Destroy;
 end;
 
 end.

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions>
-    <Transaction>2020/08/10 19:15:33.075,=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/08/10 19:20:27.723,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Unit1.dfm=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
-    <Transaction>2020/08/10 19:20:27.723,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Unit1.pas=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>2020/08/10 20:23:01.881,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Project1.dproj=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+	<Transactions>
+    <Transaction>2020/08/10 19:15:33.000.075,=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/08/10 19:20:27.000.723,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Unit1.dfm=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
+    <Transaction>2020/08/10 19:20:27.000.723,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Unit1.pas=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>2020/08/10 20:23:01.000.881,C:\Users\SDZANELLA\Documents\Projetos\Gerar m3u RedeCanais\Project1.dproj=C:\Users\SDZANELLA\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
   </Transactions>
+	<BT_BuildType>Debug</BT_BuildType>
 </BorlandProject>
