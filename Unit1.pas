@@ -16,7 +16,6 @@ type
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
-    Edit1: TEdit;
     Button1: TButton;
     Memo1: TMemo;
     Memo2: TMemo;
@@ -25,14 +24,22 @@ type
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
+    ComboBox1: TComboBox;
+    Label1: TLabel;
+    Button5: TButton;
+    Edit1: TEdit;
+    Button6: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure Button6Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+    sites : array of TStringlist;
   end;
 
 var
@@ -66,15 +73,19 @@ begin
   //
   retorno := TStringList.Create;
   lista   := TStringList.Create;
-    retorno.Text := GetURL(edit1.Text);
-    identificador := '<li><a href="/browse-a';
+    retorno.Text := GetURL(ComboBox1.Text);
+    identificador := '<li><a href="/browse-';
 
+    try
     while retorno.Text.Contains(identificador) do begin
       retorno.Text := copy(retorno.Text, pos(identificador,retorno.Text));
       link := copy(retorno.Text, pos('/',retorno.Text));
       link := copy(link,1,pos('"',link)-1);
       lista.Add('https://redecanais.bz'+link);
       retorno.Text := copy(retorno.Text,5);
+    end;
+    except
+      ShowMessage('Ocorreu Algum problema, O site pode estar fora do ar, você está sem internet, a estrutura do site mudou, ou começou o apocalipse!');
     end;
 
 
@@ -159,9 +170,11 @@ begin
     //memo4.Lines.Text := geturl(copy(memo2.Lines[1],1,pos('@',memo2.Lines[1])-1));
     memoPg.Text := memo2.Lines.Text;
 
+    try
     for I := 0 to memoPg.Count -1 do begin
+      if edit1.Text <> '' then
+      Sleep(strtoint(edit1.Text));
       retorno.Text := GetURL(copy(memoPg[i],1,pos('@',memoPg[i])-1));
-
       retorno.Text := Copy(retorno.Text,pos('iframe',retorno.Text));
       retorno.Text := Copy(retorno.Text,pos('src="',retorno.Text)+5);
       linkFrame := Copy(retorno.Text, 1, pos('"',retorno.Text)-1);
@@ -172,6 +185,9 @@ begin
       retorno.Text := Copy(retorno.Text,pos('poster=".',retorno.Text)+9);
       poster := Copy(retorno.Text,1,pos('"',retorno.Text)-1);
       lista.Add(link+'@'+'https://redecanais.bz/player3'+poster+copy(memoPg[i],pos('@',memoPg[i])));
+    end;
+    except
+      ShowMessage('Ocorreu Algum problema, O site pode estar fora do ar, você está sem internet, a estrutura do site mudou, ou começou o apocalipse!');
     end;
 
 
@@ -185,7 +201,7 @@ procedure TForm1.Button4Click(Sender: TObject);
 var
 dados, linkvideos, lista: tstringlist;
 i,ii,g,j:integer;
-grupo, nome, capa,link: string;
+grupo, nome, capa,link,linha: string;
 begin
     dados := TStringList.Create;
     lista := TStringList.Create;
@@ -193,9 +209,17 @@ begin
     dados.Text := memo3.Lines.Text;
 
     for I := 0 to dados.Count-1 do begin
-      link := copy(dados[i],pos('@',dados[i])-1);
+      linha := dados[i];
+      link := copy(linha,1,pos('@',linha)-1);
+      linha := copy(linha,pos('@',linha)+1);
+      capa := copy(linha,1,pos('@',linha)-1);
+      linha := copy(linha,pos('@',linha)+1);
+      nome := copy(linha,1,pos('@',linha)-1);
+      linha := copy(linha,pos('@',linha)+1);
+      grupo := linha;
 
-      lista.Add()
+      lista.Add('#EXTINF:-1 tvg-logo="'+capa+'" group-title="'+grupo+'",'+nome);
+      lista.Add(link);
 
     end;
 
@@ -203,6 +227,39 @@ begin
     memo4.Lines.Text := lista.Text;
     dados.Destroy;
     lista.Destroy;
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+var
+lista:tstringlist;
+begin
+     lista := TStringList.Create;
+
+     lista.Add('#EXTM3U');
+
+     lista.Add('#EXTINF:-1 tvg-logo="https://i.pinimg.com/280x280_RS/18/0b/72/180b721c6a9bc3efa678d1b87fd1b57e.jpg" group-title="Créditos",Créditos: Alexsandro Zanella');
+     lista.Add('http://0.0.0.0');
+     lista.Add('#EXTINF:-1 tvg-logo="https://i.pinimg.com/280x280_RS/18/0b/72/180b721c6a9bc3efa678d1b87fd1b57e.jpg" group-title="Créditos",WPP:+5554991245573');
+     lista.Add('http://0.0.0.0');
+     lista.Add('');
+     lista.Add(memo4.Lines.Text);
+
+
+     lista.SaveToFile('Zanella_Series.m3u8');
+
+     lista.Destroy;
+end;
+
+procedure TForm1.Button6Click(Sender: TObject);
+begin
+    if PageControl1.ActivePage = TabSheet1 then begin
+            //
+    end else if PageControl1.ActivePage = TabSheet2 then begin
+
+    end else if PageControl1.ActivePage = TabSheet3 then begin
+
+    end;
+
 end;
 
 end.
