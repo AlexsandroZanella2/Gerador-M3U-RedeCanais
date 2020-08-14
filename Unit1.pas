@@ -7,20 +7,23 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient,
   IdHTTP, IdIOHandler, IdIOHandlerSocket, IdIOHandlerStack, IdSSL, IdSSLOpenSSL,
   System.Net.URLClient, System.Net.HttpClient, System.Net.HttpClientComponent,
-  WinINet;
+  WinINet, System.Threading;
 
 type
+
   TForm1 = class(TForm)
+    Button7: TButton;
+
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
     TabSheet4: TTabSheet;
-    Button1: TButton;
     Memo1: TMemo;
     Memo2: TMemo;
     Memo3: TMemo;
     Memo4: TMemo;
+    Button1: TButton;
     Button2: TButton;
     Button3: TButton;
     Button4: TButton;
@@ -29,25 +32,56 @@ type
     Button5: TButton;
     Edit1: TEdit;
     Button6: TButton;
+    TestMode: TCheckBox;
+    ProgressBar1: TProgressBar;
+    //nroArrDados:integer;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button7Click(Sender: TObject);
+
   private
     { Private declarations }
   public
     { Public declarations }
-    sites : array of TStringlist;
+
+    procedure AttMemo3(valor:string);
+    function getMemo2:string;
+    //sites : array of TStringlist;
+
+
+
+    //procedure BuscaDados(listaLinks:string; nro:integer);
+    //procedure BuscaDados(listaLinks:string; nro:integer);
   end;
 
 var
   Form1: TForm1;
+  //arrDados: array of tstringlist;
+  nroThreads:integer;
+  ListaDD : tstringlist;
 
 implementation
 
 {$R *.dfm}
+
+procedure TForm1.AttMemo3(valor: string);
+begin
+  memo3.Lines.Add(valor);
+end;
+
+function TForm1.getMemo2: string;
+//var
+//Resultado:tstringlist;
+begin
+   //Resultado := tstringlist.Create;
+   //Resultado.Text := memo2.Lines.Text;
+   result := memo2.Lines.Text;
+  // resultado.Destroy;
+end;
 
 function GetURL(const AURL: string): string;
 var
@@ -63,6 +97,49 @@ begin
     HttpClient.Free;
   end;
 end;
+
+procedure BuscaDados(listaLinks:string; nro:integer);
+var
+retorno, lista, memoPg:tstringlist;
+i,ii,g,j:integer;
+link,linkFrame,poster:string;
+begin
+    retorno := TStringList.Create;
+    lista   := TStringList.Create;
+    memoPg  := TStringList.Create;
+    //link := memo2.Lines[1];
+    //link := copy(link,1,)
+    //memo4.Lines.Text := geturl(copy(memo2.Lines[1],1,pos('@',memo2.Lines[1])-1));
+    memoPg.Text := listaLinks;
+    memoPg.Text := ListaDD.Text;
+
+    try
+     for I := 0 to memoPg.Count -1 do begin
+     //if edit1.Text <> '' then
+     //Sleep(strtoint(edit1.Text));
+      retorno.Text := GetURL(copy(memoPg[i],1,pos('@',memoPg[i])-1));
+      retorno.Text := Copy(retorno.Text,pos('iframe',retorno.Text));
+      retorno.Text := Copy(retorno.Text,pos('src="',retorno.Text)+5);
+      linkFrame := Copy(retorno.Text, 1, pos('"',retorno.Text)-1);
+      retorno.Text := GetURL('https://redecanais.bz'+linkFrame);
+      retorno.Text := Copy(retorno.Text,pos('baixar="',retorno.Text)+8);
+      link := Copy(retorno.Text, 1, Pos('.mp4',retorno.Text)+3);
+
+      retorno.Text := Copy(retorno.Text,pos('poster=".',retorno.Text)+9);
+      poster := Copy(retorno.Text,1,pos('"',retorno.Text)-1);
+      ListaDD.Add(link+'@'+'https://redecanais.bz/player3'+poster+copy(memoPg[i],pos('@',memoPg[i])));
+
+     end;
+    except
+      ShowMessage('Ocorreu Algum problema, O site pode estar fora do ar, você está sem internet, a estrutura do site mudou, ou começou o apocalipse!' + 'Thread: '+inttostr(nro));
+    end;
+
+    //arrDados[nro].Text := lista.Text;
+    retorno.Destroy;
+    lista.Destroy;
+    memoPg.Destroy;
+end;
+
 
 procedure TForm1.Button1Click(Sender: TObject);
 var
@@ -158,6 +235,53 @@ end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 var
+i,nroLinks:integer;
+listaAtual:TStringList;
+Tarefa: ITask;
+textoEnviar: string;
+begin
+  if ListaDD = nil then
+  ListaDD := TStringList.Create;
+  ListaDD.Text := '';
+  ListaDD.Text := memo2.Lines.Text;
+  nroThreads := 0;
+  //nroArrDados := 0;
+  listaAtual := tstringlist.Create;
+  nroLinks := memo2.Lines.Count;
+  ProgressBar1.Max := memo2.Lines.Count;
+ { for I := 0 to nroLinks-1 do begin
+     //listaAtual.Add(memo2.Lines[i]);
+     if ((listaAtual.Count mod 10) = 0) and (i>1) then begin
+         //SetLength(Tarefa   , High(Tarefa   ) + 2);
+         //SetLength(arrDados , High(arrDados ) + 2);
+         //nroThreads := High(Tarefa);
+         //arrDados[High(Tarefa)] := tstringlist.create;
+         //textoenviar := listaAtual.Text;
+         Tarefa[High(Tarefa)] := TTask.Create(procedure
+                                              begin
+                                                BuscaDados(textoenviar,nroThreads)
+                                              end);
+        { TThread.Queue(TThread.CurrentThread,
+                procedure
+                begin
+                  BuscaDados(listaAtual.Text,nroThreads);
+                end);   }
+        { Tarefa[High(Tarefa)].Start;
+         //if TestMode.Checked then begin
+         //  ShowMessage(listaAtual.Text);
+         //end;
+
+         //listaAtual.Text := '';
+     end;
+  end;
+      if listaAtual.Count <> 0 then begin
+         //SetLength(Tarefa   , High(Tarefa   ) + 2);
+         //SetLength(arrDados , High(arrDados ) + 2);
+         //nroThreads := High(Tarefa);
+         //arrDados[High(arrDados)] := tstringlist.create;   }
+         Tarefa := TTask.Create(procedure
+
+var
 retorno, lista, memoPg:tstringlist;
 i,ii,g,j:integer;
 link,linkFrame,poster:string;
@@ -168,12 +292,15 @@ begin
     //link := memo2.Lines[1];
     //link := copy(link,1,)
     //memo4.Lines.Text := geturl(copy(memo2.Lines[1],1,pos('@',memo2.Lines[1])-1));
-    memoPg.Text := memo2.Lines.Text;
+    //memoPg.Text := listaLinks;
+    memoPg.Text := self.Memo2.Lines.Text;
 
-    try
-    for I := 0 to memoPg.Count -1 do begin
-      if edit1.Text <> '' then
-      Sleep(strtoint(edit1.Text));
+    self.ProgressBar1.Visible:= true;
+     for I := 0 to memoPg.Count -1 do begin
+     //if edit1.Text <> '' then
+     //Sleep(strtoint(edit1.Text));
+     self.ProgressBar1.Position := i;
+      try
       retorno.Text := GetURL(copy(memoPg[i],1,pos('@',memoPg[i])-1));
       retorno.Text := Copy(retorno.Text,pos('iframe',retorno.Text));
       retorno.Text := Copy(retorno.Text,pos('src="',retorno.Text)+5);
@@ -184,18 +311,47 @@ begin
 
       retorno.Text := Copy(retorno.Text,pos('poster=".',retorno.Text)+9);
       poster := Copy(retorno.Text,1,pos('"',retorno.Text)-1);
-      lista.Add(link+'@'+'https://redecanais.bz/player3'+poster+copy(memoPg[i],pos('@',memoPg[i])));
-    end;
-    except
-      ShowMessage('Ocorreu Algum problema, O site pode estar fora do ar, você está sem internet, a estrutura do site mudou, ou começou o apocalipse!');
+      self.Memo3.lines.Add(link+'@'+'https://redecanais.bz/player3'+poster+copy(memoPg[i],pos('@',memoPg[i])));
+      except
+      self.Memo3.lines.Add('@@@'+memoPg[i]+'@@@')
     end;
 
+     end;
+     Self.ProgressBar1.Position := 0;
+       self.ProgressBar1.Visible:= false;
 
-    memo3.Lines.Text := lista.Text;
+    //arrDados[nro].Text := lista.Text;
     retorno.Destroy;
     lista.Destroy;
     memoPg.Destroy;
+end);
+        { TThread.Queue(TThread.CurrentThread,
+                procedure
+                begin
+                  BuscaDados(listaAtual.Text,nroThreads);
+                end); }
+         Tarefa.Start;
+         //listaAtual.Text := '';
+      //end;
+
+      //TTask.WaitForAll(Tarefa);
+
+      {ShowMessage('Nro Threads: '+inttostr(nroThreads+1));
+      memo3.Lines.Text := '';
+      for I := 0 to High(arrDados) do begin
+        if TestMode.Checked then
+          memo3.Lines.Add('Thread: '+ inttostr(i));
+        memo3.Lines.Add(arrDados[i].Text)
+      end;                   }
+
+      //for I := 0 to High(tarefa)-1 do begin
+      //  FreeAndNil(tarefa);
+      //  FreeAndNil(arrDados);
+      //end;
+  listaAtual.Destroy;
 end;
+
+
 
 procedure TForm1.Button4Click(Sender: TObject);
 var
@@ -260,6 +416,11 @@ begin
 
     end;
 
+end;
+
+procedure TForm1.Button7Click(Sender: TObject);
+begin
+    memo3.Lines.Text := ListaDD.Text;
 end;
 
 end.

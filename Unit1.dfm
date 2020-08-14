@@ -25,59 +25,66 @@ object Form1: TForm1
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 79
+    Top = 96
     Width = 893
-    Height = 418
-    ActivePage = TabSheet1
+    Height = 401
+    ActivePage = TabSheet2
     Align = alBottom
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    ExplicitTop = 80
     object TabSheet1: TTabSheet
       Caption = 'S'#233'ries'
+      ExplicitHeight = 390
       object Memo1: TMemo
         Left = 0
         Top = 0
         Width = 885
-        Height = 390
+        Height = 373
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 390
       end
     end
     object TabSheet2: TTabSheet
       Caption = 'V'#237'deos'
       ImageIndex = 1
+      ExplicitHeight = 390
       object Memo2: TMemo
         Left = 0
         Top = 0
         Width = 885
-        Height = 390
+        Height = 373
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 390
       end
     end
     object TabSheet3: TTabSheet
       Caption = 'Links'
       ImageIndex = 2
+      ExplicitHeight = 390
       object Memo3: TMemo
         Left = 0
         Top = 0
         Width = 885
-        Height = 390
+        Height = 373
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 390
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Resultado'
       ImageIndex = 3
+      ExplicitHeight = 390
       object Memo4: TMemo
         Left = 0
         Top = 0
         Width = 885
-        Height = 390
+        Height = 373
         Align = alClient
         TabOrder = 0
+        ExplicitHeight = 390
       end
     end
   end
@@ -174,8 +181,8 @@ object Form1: TForm1
     Height = 21
     Alignment = taCenter
     TabOrder = 7
-    Text = '3000'
     TextHint = 'Sleep Frames'
+    Visible = False
   end
   object Button6: TButton
     Left = 583
@@ -184,6 +191,37 @@ object Form1: TForm1
     Height = 38
     Caption = 'Teste'
     TabOrder = 8
+    Visible = False
     OnClick = Button6Click
+  end
+  object TestMode: TCheckBox
+    Left = 583
+    Top = 12
+    Width = 97
+    Height = 17
+    Caption = 'Modo Teste'
+    TabOrder = 9
+    Visible = False
+  end
+  object Button7: TButton
+    Left = 679
+    Top = 35
+    Width = 98
+    Height = 38
+    Caption = 'Atualizar Links'
+    TabOrder = 10
+    Visible = False
+    OnClick = Button7Click
+  end
+  object ProgressBar1: TProgressBar
+    Left = 0
+    Top = 79
+    Width = 893
+    Height = 17
+    Align = alBottom
+    TabOrder = 11
+    ExplicitLeft = 808
+    ExplicitTop = 48
+    ExplicitWidth = 150
   end
 end
